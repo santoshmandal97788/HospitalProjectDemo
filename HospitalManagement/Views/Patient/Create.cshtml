@@ -1,0 +1,174 @@
+﻿@model HospitalManagement.Models.ViewModel.PatientViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+@using (Html.BeginForm("Create", "Patient", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <br />
+    <br />
+    <br />
+<div class="container">
+        <h2 class="text-center">Add New Patient</h2>
+
+        <hr />
+    <div class="row">
+        <div class="form-horizontal col-md-12">
+
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PatImage, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-3">
+                        <input type="file" name="PatImage" id="fileUpload" accept=".png,.jpg,.jpeg,.gif,.tif" />
+                    </div>
+
+                    <div class="col-md-5">
+                        <button class="btn btn-primary" type="button" onclick="showDiv();" id="openCam">Take Live Photo</button>
+                        <button class="btn btn-warning" type="button" onclick="stop();" id="stopCam">Stop Camera</button>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="row" id="myDIV" style="display:none">
+        <div class="col-md-6" >-->
+            <!-- Stream video via webcam -->
+            <!--<div class="video-wrap">
+        <video id="video" playsinline autoplay></video>-->
+            <!-- Webcam video snapshot -->
+            <!--<canvas id="canvas" width="200" height="200"></canvas>
+    </div>-->
+            <!-- Trigger canvas web API -->
+            <!--<div class="controller">
+                <button id="snap" onclick="capture();">Capture</button>
+            </div>
+
+
+        </div>
+    </div>-->
+
+            <div id="myDIV">
+                <div class="col-md-12">
+                    <div style="margin: 0 auto;  text-align: center">
+                        <div style="float: left; border: 4px solid #ccc; padding: 5px">
+
+                            <video autoplay="true" id="Camera" style="width:320px; height:240px;"></video>
+
+                            <br>
+                            <button id="snap" type="button">Capture</button>
+                        </div>
+                        <div style="float: right; margin-right: 422px; border: 4px solid #ccc; padding: 5px">
+                            <canvas id="canvas" width="320" height="240"></canvas>
+
+                            @*<img id="canvas" style="width: 320px; height: 225px;" src="" />*@
+                            <br>
+                            <input type="button" id="btnSave" name="btnSave" value="Save the canvas(image) to server" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div><br /></div>
+            <div class="row">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PatName, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.PatName, new { htmlAttributes = new { @class = "form-control col-md-6" } })
+                        @Html.ValidationMessageFor(model => model.PatName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PatContact, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.PatContact, new { htmlAttributes = new { @class = "form-control col-md-6" } })
+                        @Html.ValidationMessageFor(model => model.PatContact, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-4 " })
+
+                    <div class="col-md-8">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.IsActive)
+                            @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-md-4 col-md-offset-4">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a href="@Url.Action("Index", "Patient")" class="btn btn-success">Back To List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+}
+
+
+@section Scripts {
+
+    <script>
+        function showDiv() {
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "Block";
+
+            } else {
+                x.style.display = "none";
+                OpenWebCamera();
+
+            }
+        }
+
+        function OpenWebCamera() {
+            var video = document.querySelector("#Camera");
+
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia
+                    ({
+
+                        audio: false,
+                        video: {
+                            width: 1280, height: 720
+                        }
+                    })
+                    .then(function (stream) {
+                        window.stream = stream;
+                        video.srcObject = stream;
+                    })
+                    .catch(function (err0r) {
+                        console.log(err0r);
+                        console.log("Something went wrong!");
+                    });
+            }
+        }
+        const video = document.getElementById('Camera');
+        const canvas = document.getElementById('canvas');
+        const snap = document.getElementById("snap");
+        // Draw image
+        var context = canvas.getContext('2d');
+        snap.addEventListener("click", function () {
+            context.drawImage(video, 0, 0, 300, 200);
+              webcam.save("@Url.Content("~/Patient/Capture")/");
+        });
+    </script>
+
+  
+}
+

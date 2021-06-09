@@ -1,0 +1,61 @@
+﻿@model HospitalManagement.Models.ViewModel.PatientViewModel
+
+
+@{
+    ViewBag.Title = "Print";
+}
+<link href="~/Content/css/CardPrint.css" rel="stylesheet" />
+
+    <br />
+    <br />
+    <div class="container">
+        <div class="card" id="printDiv">
+            <h1>Patient Details</h1>
+
+            @if (Model.PatImage != null)
+            {
+                var base64 = Convert.ToBase64String(Model.PatImage);
+                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+                <img class="profile-img" src="@imgsrc" alt="">
+
+            }
+            <h1>@Model.PatName</h1>
+            <p class="title">Kathmandu</p>
+            <p>@Model.PatContact</p>
+            <p>@Model.EntryDate.ToShortDateString()</p>
+
+        </div>
+        <div class="col-md-4 col-md-offset-5 col-xs-4 col-xs-offset-4 col-sm-4  col-sm-offset-4">
+
+
+            <div class="btn-toolbar btn-group">
+                <a class="btn btn-primary" style="width:50px; margin-left:15px;" onclick="printpage()">Print</a>
+                @*<button class="btn btn-primary" onclick="printpage()" value="Print">Print<span><i class="bi bi-printer"></i></span></button>*@
+                <a class="btn btn-primary" style="width:50px; margin-left:5px;" href="@Url.Action("Index","Patient")">Back</a>
+            </div>
+
+        </div>
+
+    </div>
+
+  
+
+<script type="text/javascript">
+
+    function printpage() {
+        var getpanel = document.getElementById("printDiv");
+        var MainWindow = window.open('', '', 'height=500,width=800');
+        MainWindow.document.write('<html><head><title></title>');
+        MainWindow.document.write("<link rel=\"stylesheet\" href=\"~/Content/cardprint.css\" type=\"text/css\"/>");
+        MainWindow.document.write('</head><body onload="window.print();window.close()">');
+        MainWindow.document.write(getpanel.innerHTML);
+        MainWindow.document.write('</body></html>');
+        MainWindow.document.close();
+        setTimeout(function () {
+            MainWindow.print();
+        }, 500)
+        return false;
+    }
+
+
+</script>

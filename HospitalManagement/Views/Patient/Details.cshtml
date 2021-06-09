@@ -1,0 +1,41 @@
+﻿@model HospitalManagement.Models.ViewModel.PatientViewModel
+
+@{
+
+    ViewBag.Title = "Employee Details";
+    //var photoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noimage.jpg");
+
+    var base64 = Convert.ToBase64String(@Model.PatImage);
+    var imgsrc = string.Format("data:image/jpg;base64,{0}", base64);
+    var date = @Model.EntryDate.ToShortDateString();
+}
+
+<div class="container">
+    <div class="page-header text-center">
+        <h1>Patient Details of @Model.PatName</h1>
+    </div>
+    <div class="row">
+  
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel with-nav-tabs panel-primary">
+                <div class="panel-heading">
+                    <h1>@Model.PatName</h1>
+                </div>
+                <div class="panel-body text-center">
+                    <img class="img-thumbnail" style="width:100px; height:100px;" src="@imgsrc" />
+
+                    <h4>Patient ID : @Model.Id</h4>
+                    <h4>Name : @Model.PatName</h4>
+                    <h4>Contact : @Model.PatContact</h4>
+                    <h4>IsActive : @Model.IsActive</h4>
+                    <h4>EntryDate : @date</h4>
+                </div>
+                <div class="panel-footer text-center">
+                    <a href="@Url.Action("Index", "Patient")" class="btn btn-primary">Back</a>
+                    <a href="@Url.Action("Index", "Patient")" class="btn btn-primary">Edit</a>
+                     @Html.ActionLink("Print", "Print", new { id = Model.Id } ,htmlAttributes: new { @class = "btn btn-primary" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

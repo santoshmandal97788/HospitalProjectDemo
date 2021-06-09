@@ -1,0 +1,157 @@
+﻿@using HospitalManagement.Models;
+@{
+    ViewBag.Title = "Dashboard";
+}
+<style>
+    .card-counter {
+        box-shadow: 2px 2px 10px #DADADA;
+        margin: 5px;
+        padding: 20px 10px;
+        background-color: #fff;
+        height: 100px;
+        border-radius: 5px;
+        transition: .3s linear all;
+    }
+
+        .card-counter:hover {
+            box-shadow: 4px 4px 20px #DADADA;
+            transition: .3s linear all;
+        }
+
+        .card-counter.primary {
+            background-color: #007bff;
+            color: #FFF;
+        }
+
+        .card-counter.danger {
+            background-color: #ef5350;
+            color: #FFF;
+        }
+
+        .card-counter.success {
+            background-color: #66bb6a;
+            color: #FFF;
+        }
+
+        .card-counter.info {
+            background-color: #26c6da;
+            color: #FFF;
+        }
+
+        .card-counter i {
+            font-size: 5em;
+            opacity: 0.2;
+        }
+
+        .card-counter .count-numbers {
+            position: absolute;
+            right: 35px;
+            top: 20px;
+            font-size: 32px;
+            display: block;
+        }
+
+        .card-counter .count-name {
+            position: absolute;
+            right: 35px;
+            top: 65px;
+            font-style: italic;
+            text-transform: capitalize;
+            opacity: 0.5;
+            display: block;
+            font-size: 18px;
+        }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="card-counter primary">
+                <i class="fa fa-users"></i>
+                @{
+                    int str1 = 0;
+                }
+                @{
+                    str1 = Convert.ToInt32(Helper.TotalCount());
+
+                }
+                <span class="count-numbers">@str1</span>
+                <span class="count-name">Total Patients</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="card-counter danger">
+                <i class="fa fa-user-md"></i>
+                @{
+                    int activePat = 0;
+                }
+                @{
+                    activePat = Convert.ToInt32(Helper.ActiveTotalCount());
+
+                }
+                <span class="count-numbers">@activePat</span>
+                <span class="count-name">Active Patients</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="card-counter success">
+                <i class="fa fa-heartbeat"></i>
+
+                @{
+                    int inActivePat = 0;
+                }
+                @{
+                    inActivePat = Convert.ToInt32(Helper.InactiveTotalCount());
+
+                }
+                <span class="count-numbers">@inActivePat</span>
+                <span class="count-name">Discharged Patient</span>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="card-counter info">
+                <i class="fa fa-users"></i>
+                @{
+                    int todayAdmit = 0;
+                }
+                @{
+                    todayAdmit = Convert.ToInt32(Helper.TodayAdmitCount());
+
+                }
+                <span class="count-numbers">@todayAdmit</span>
+                <span class="count-name">Today Admit</span>
+            </div>
+        </div>
+    </div>
+   
+    <div id="chartContainer" @*style="height: 370px; width: 100%;*@>
+        <div class="row"></div>
+    </div>
+
+</div>
+<div id="" class="con" @*style="height: 370px; width: 100%;*@></div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	theme: "light2", // "light1", "light2", "dark1", "dark2"
+	title: {
+		text: "Number of Employees under Each Manager"
+	},
+	axisY: {
+		title: "No. of Employees"
+	},
+	data: [{
+		type: "column",
+		dataPoints: @Html.Raw(ViewBag.DataPoints)
+	}]
+});
+chart.render();
+
+}
+</script>
