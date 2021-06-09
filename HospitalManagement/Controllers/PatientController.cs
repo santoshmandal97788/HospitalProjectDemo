@@ -89,10 +89,29 @@ namespace HospitalManagement.Controllers
         [HttpPost]
         public ActionResult Create([Bind(Exclude = "PatImage")] PatientViewModel pvm)
         {
-            byte[] imageData = ConvertImage();
-            pvm.PatImage = imageData;
+            //byte[] imageData = ConvertImage();
+            //pvm.PatImage = imageData;
 
-            pr.AddPatient(pvm);
+            //pr.AddPatient(pvm);
+            //return RedirectToAction("Index", "Patient");
+
+            if (Session["imageData"] == null)
+            {
+                byte[] imageData = ConvertImage();
+                pvm.PatImage = imageData;
+                pr.AddPatient(pvm);
+
+            }
+            else
+            {
+                //byte[] data = (byte[])System.Web.HttpContext.Current.Session["imageData"];
+                //pvm.PatImage = data;
+                //pr.AddPatient(pvm);
+                byte[] imageData = ConvertImage();
+                pvm.PatImage = imageData;
+                pr.AddPatient(pvm);
+                Session["imageData"] = null;
+            }
             return RedirectToAction("Index", "Patient");
         }
 
@@ -101,7 +120,7 @@ namespace HospitalManagement.Controllers
         private byte[] ConvertImage()
         {
             byte[] imageData = null;
-            if (Request.Files.Count > 0)
+            if (Request.Files.Count > 0 && Session["imageData"] == null)
             {
                 HttpPostedFileBase pf = Request.Files["PatImage"];
                 System.Drawing.Image bm = System.Drawing.Image.FromStream(pf.InputStream);
@@ -115,7 +134,21 @@ namespace HospitalManagement.Controllers
                 //}
 
             }
+            if (Session["imageData"] != null)
+            {
+                //HttpPostedFileBase pf = Request.Files["PatImage"];
+                //System.Drawing.Image bm = System.Drawing.Image.FromStream(pf.InputStream);
+                System.Drawing.Image bm = (Image)Session["imageData"];
+                bm = ResizeImage((Bitmap)bm, 98, 118); /// new width, heig
 
+                imageData = imageToByteArray(bm);
+                //using (var binaryReader = new BinaryReader(objFiles.InputStream))
+                //{
+                //    imageData = binaryReader.ReadBytes(objFiles.ContentLength);
+
+                //}
+
+            }
             return imageData;
         }
         public static Bitmap ResizeImage(Image image, int width, int height)
@@ -136,19 +169,43 @@ namespace HospitalManagement.Controllers
                 using (var wrapMode = new ImageAttributes())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    //if (image.Width>2423)
+                    //{
+                    //    image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                    //}
+                   
                     graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
             }
+            
 
             return destImage;
         }
-
 
         public byte[] imageToByteArray(System.Drawing.Image imageIn)
         {
             MemoryStream ms = new MemoryStream();
             imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
             return ms.ToArray();
+        }
+
+
+        [HttpPost]
+        public void Capture(string imageData)
+        {
+            string capturedImage = imageData;
+            byte[] data = Convert.FromBase64String(capturedImage);
+
+            Image img = byteArrayToImage(data);
+            Session["imageData"] = img;
+
+        }
+
+        public Image byteArrayToImage(byte[] byteArrayIn)
+        {
+            MemoryStream ms = new MemoryStream(byteArrayIn);
+            Image returnImage = Image.FromStream(ms);
+            return returnImage;
         }
     }
 }

@@ -16,7 +16,7 @@
         <h2 class="text-center">Add New Patient</h2>
 
         <hr />
-    <div class="row">
+    @*<div class="row">*@
         <div class="form-horizontal col-md-12">
 
 
@@ -34,25 +34,10 @@
                     </div>
                 </div>
             </div>
-            <!--<div class="row" id="myDIV" style="display:none">
-        <div class="col-md-6" >-->
-            <!-- Stream video via webcam -->
-            <!--<div class="video-wrap">
-        <video id="video" playsinline autoplay></video>-->
-            <!-- Webcam video snapshot -->
-            <!--<canvas id="canvas" width="200" height="200"></canvas>
-    </div>-->
-            <!-- Trigger canvas web API -->
-            <!--<div class="controller">
-                <button id="snap" onclick="capture();">Capture</button>
-            </div>
+            
+            <div class="row">
+                <div id="myDIV" class="col-md-12 col-md-offset-4" style="display:none; margin-bottom:10px;">
 
-
-        </div>
-    </div>-->
-
-            <div id="myDIV">
-                <div class="col-md-12">
                     <div style="margin: 0 auto;  text-align: center">
                         <div style="float: left; border: 4px solid #ccc; padding: 5px">
 
@@ -66,13 +51,13 @@
 
                             @*<img id="canvas" style="width: 320px; height: 225px;" src="" />*@
                             <br>
-                            <input type="button" id="btnSave" name="btnSave" value="Save the canvas(image) to server" />
+                            <input type="submit" id="btnSave" name="btnSave" value="Save Image to Server" />
                         </div>
                     </div>
-                </div>
 
+
+                </div>
             </div>
-            <div><br /></div>
             <div class="row">
                 <div class="form-group">
                     @Html.LabelFor(model => model.PatName, htmlAttributes: new { @class = "control-label col-md-4" })
@@ -109,12 +94,12 @@
 
 
             <div class="col-md-4 col-md-offset-4">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Add Patient" class="btn btn-primary" />
                 <a href="@Url.Action("Index", "Patient")" class="btn btn-success">Back To List</a>
             </div>
         </div>
     </div>
-</div>
+@*</div>*@
 
 
 
@@ -128,11 +113,9 @@
             var x = document.getElementById("myDIV");
             if (x.style.display === "none") {
                 x.style.display = "Block";
-
+                OpenWebCamera();
             } else {
                 x.style.display = "none";
-                OpenWebCamera();
-
             }
         }
 
@@ -164,9 +147,48 @@
         // Draw image
         var context = canvas.getContext('2d');
         snap.addEventListener("click", function () {
-            context.drawImage(video, 0, 0, 300, 200);
+            context.drawImage(video, 0, 0, 640, 340);
               webcam.save("@Url.Content("~/Patient/Capture")/");
         });
+
+
+        $(function () {
+
+            $("#btnSave").click(function (e) {
+                e.preventDefault();
+
+                var image = document.getElementById("canvas").toDataURL("image/png");
+
+                image = image.replace('data:image/png;base64,', '');
+              
+                $.ajax({
+
+                    type: 'POST',
+
+                    url: '/Patient/Capture',
+
+                    data: '{ "imageData" : "' + image + '" }',
+                   
+                    contentType: 'application/json; charset=utf-8',
+
+                    dataType: 'json',
+
+                    success: function (msg) {
+
+                        alert('Image saved successfully !');
+
+                    }
+
+                });
+
+            });
+
+        });
+        function vidOff() {
+            localStream.getTracks().forEach((track) => {
+                track.stop();
+            })
+        };
     </script>
 
   
