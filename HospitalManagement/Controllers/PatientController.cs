@@ -1,4 +1,5 @@
 ﻿using HospitalManagement.Models.Repository;
+
 using HospitalManagement.Models.ViewModel;
 using Newtonsoft.Json;
 using System;
@@ -21,18 +22,6 @@ namespace HospitalManagement.Controllers
 
         public ActionResult Dashboard()
         {
-            List<DataPoint> dataPoints = new List<DataPoint>();
-
-            dataPoints.Add(new DataPoint("Albert", 10));
-            dataPoints.Add(new DataPoint("Tim", 30));
-            dataPoints.Add(new DataPoint("Wilson", 17));
-            dataPoints.Add(new DataPoint("Joseph", 39));
-            dataPoints.Add(new DataPoint("Robert", 30));
-            dataPoints.Add(new DataPoint("Sophia", 25));
-            dataPoints.Add(new DataPoint("Emma", 15));
-
-            ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
-
             return View();
         }
 
@@ -53,10 +42,34 @@ namespace HospitalManagement.Controllers
             return View(pr.FindById(id));
         }
         [HttpPost]
-        public ActionResult Edit(PatientViewModel pvm)
+        public ActionResult Edit([Bind(Exclude = "PatImage")] PatientViewModel pvm)
         {
-            pr.UpdatePatient(pvm);
-            return RedirectToAction("Index");
+            var patImage = Request.Files["PatImage"];
+            var patient = pr.FindById(pvm.Id);
+            if (Session["imageData"] == null)
+            {
+                if (patImage.ContentLength ==0 && patImage.FileName=="" && patImage.ContentType=="application/octet-stream")
+                {
+                    pvm.PatImage = patient.PatImage;
+                    pr.UpdatePatient(pvm);
+                }
+                else
+                {
+                    byte[] imageData = ConvertImage();
+                    pvm.PatImage = imageData;
+                    pr.UpdatePatient(pvm);
+                }
+               
+            }
+            else
+            {
+                byte[] imageData = ConvertImage();
+                pvm.PatImage = imageData;
+                pr.UpdatePatient(pvm);
+                Session["imageData"] = null;
+            }
+            return RedirectToAction("Index", "Patient");
+
         }
        
         [HttpPost]
@@ -206,6 +219,112 @@ namespace HospitalManagement.Controllers
             MemoryStream ms = new MemoryStream(byteArrayIn);
             Image returnImage = Image.FromStream(ms);
             return returnImage;
+        }
+        [HttpGet]
+        public ActionResult PieChart()
+        {
+            List<PieChartViewModel> pieChartResult = new List<PieChartViewModel>();
+            var activepatient = pr.GetAllPatient().Where(a => a.IsActive == true).Count();
+            var dischargedPatient = pr.GetAllPatient().Where(a => a.IsActive == false).Count();
+            pieChartResult.Add(new PieChartViewModel()
+            {
+                Name = "Admitted",
+                TotalRecord = activepatient
+            });
+            pieChartResult.Add(new PieChartViewModel()
+            {
+                Name = "Discharged",
+                TotalRecord = dischargedPatient
+            });
+            return Json(pieChartResult, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult barChart()
+        {
+            List<BarChartViewModel> barChartResult = new List<BarChartViewModel>();
+            var activepatient = pr.GetAllPatient().Where(a => a.EntryDate.ToShortDateString() == DateTime.Now.ToShortDateString() && a.IsActive == true).Count();
+            var dischargedPatient = pr.GetAllPatient().Where(a => a.EntryDate.ToShortDateString() == DateTime.Now.ToShortDateString() && a.IsActive == false).Count();
+            barChartResult.Add(new BarChartViewModel()
+            {
+                Name = "Admitted",
+                TotalRecord = activepatient
+            });
+            barChartResult.Add(new BarChartViewModel()
+            {
+                Name = "Discharged",
+                TotalRecord = dischargedPatient
+            });
+            return Json(barChartResult, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public ActionResult GetPatientByDate(string Date)
+        {
+            int value = Convert.ToInt32(Date);
+            List<BarChartViewModel> ptdResult = new List<BarChartViewModel>();
+            switch (value)
+            {
+                case 1:
+                    var activepatient1 = pr.GetAllPatient().Where(a => a.EntryDate.ToShortDateString() == DateTime.Now.ToShortDateString() && a.IsActive == true).Count();
+                    var dischargedPatient1 = pr.GetAllPatient().Where(a => a.EntryDate.ToShortDateString() == DateTime.Now.ToShortDateString() && a.IsActive == false).Count();
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Admitted",
+                        TotalRecord = activepatient1
+                    });
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Discharged",
+                        TotalRecord = dischargedPatient1
+                    });
+                    break;
+                case 2:
+                    var activepatient2 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Today.AddDays(-1) && a.IsActive == true).Count();
+                    var dischargedPatient2 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Today.AddDays(-1) && a.IsActive == false).Count();
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Admitted",
+                        TotalRecord = activepatient2
+                    });
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Discharged",
+                        TotalRecord = dischargedPatient2
+                    });
+                    break;
+
+                case 3:
+                    var activepatient3 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Today.AddDays(-2) && a.IsActive == true).Count();
+                    var dischargedPatient3 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Today.AddDays(-2) && a.IsActive == false).Count();
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Admitted",
+                        TotalRecord = activepatient3
+                    });
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Discharged",
+                        TotalRecord = dischargedPatient3
+                    });
+                    break;
+                case 4:
+                    var activepatient4 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Now.AddDays(-7) && a.IsActive == true).Count();
+                    var dischargedPatient4 = pr.GetAllPatient().Where(a => a.EntryDate == DateTime.Now.AddDays(-7) && a.IsActive == false).Count();
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Admitted",
+                        TotalRecord = activepatient4
+                    });
+                    ptdResult.Add(new BarChartViewModel()
+                    {
+                        Name = "Discharged",
+                        TotalRecord = dischargedPatient4
+                    });
+                    break;
+                default:
+                    break;
+            }
+            return Json(ptdResult, JsonRequestBehavior.AllowGet);
+
         }
     }
 }

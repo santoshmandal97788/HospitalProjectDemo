@@ -85,3 +85,15 @@ E:\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.csproj.Cop
 E:\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.dll
 E:\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.pdb
 E:\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.csprojAssemblyReference.cache
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Cors.dll
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.dll
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Host.SystemWeb.dll
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Security.dll
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Security.OAuth.dll
+E:\HospitalManagement\HospitalManagement\bin\Owin.dll
+E:\HospitalManagement\HospitalManagement\bin\System.Web.Cors.dll
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.xml
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Cors.xml
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Host.SystemWeb.xml
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Security.xml
+E:\HospitalManagement\HospitalManagement\bin\Microsoft.Owin.Security.OAuth.xml

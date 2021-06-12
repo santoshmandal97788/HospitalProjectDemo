@@ -13,11 +13,6 @@ namespace HospitalManagement.Models
     {
         private static IDbConnection _db = new SqlConnection(@"Data Source=DESKTOP-BRE9TRN\SQLEXPRESS; Integrated security=true; Initial Catalog=HospitalDB;");
 
-
-        //public Helper()
-        //{
-        //    _db = new SqlConnection(@"Data Source=DESKTOP-BRE9TRN\SQLEXPRESS; Integrated security=true; Initial Catalog=HospitalDB;");
-        //}
         public static int TotalCount()
         {
 
